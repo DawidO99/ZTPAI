@@ -44,7 +44,6 @@ Projekt został napisany z wykorzystaniem framweorku Spring Boot (Java 21) oraz 
 3. **Dostęp do Aplikacji:**
    Aplikacja startuje domyślnie na wbudowanym kontenerze serwera Tomcat. Dostęp pod adresem:
    - **Frontend GUI:** `http://localhost:8080/`
-   - **Dokumentacja Swagger:** `http://localhost:8080/swagger-ui.html`
    - **Baza H2 Konsola:** `http://localhost:8080/h2-console` (W systemie plikowym properties JDBC podano link domyślny `jdbc:h2:mem:f1db`, user `sa`, pass `password`)
 
 ## Specyfikacja Endpointów (API w formacie JSON)
