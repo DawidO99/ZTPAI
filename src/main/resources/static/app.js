@@ -9,8 +9,8 @@ app.controller('DriverController', function($scope, $http) {
     $scope.searchQuery = '';
 
     $scope.teams = [
-        "Red Bull Racing", "Mercedes", "Ferrari", "McLaren", "Aston Martin",
-        "Alpine", "Williams", "RB", "Sauber", "Haas"
+        "Alpine F1 Team", "Aston Martin", "Audi", "Cadillac F1 Team", "Haas F1 Team",
+        "McLaren", "Mercedes", "Racing Bulls", "Red Bull Racing", "Ferrari", "Williams"
     ];
 
     $scope.newDriver = {
