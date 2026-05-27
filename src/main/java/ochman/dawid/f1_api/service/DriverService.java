@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ochman.dawid.f1_api.event.DriverCreatedEvent;
 import org.springframework.data.domain.Sort;
+import ochman.dawid.f1_api.dto.TeamStandingDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +24,24 @@ public class DriverService {
     private final DriverMapper driverMapper;
     private final ApplicationEventPublisher eventPublisher;
 
-    public List<DriverDto> getAllDrivers(String sortBy, String dir) {
+    public List<DriverDto> getAllDrivers(String sortBy, String dir, String search) {
+        if (search != null && !search.isBlank()) {
+            return driverRepository.findByLastNameContainingIgnoreCaseOrFirstNameContainingIgnoreCase(search, search).stream()
+                    .map(driverMapper::toDto)
+                    .collect(Collectors.toList());
+        }
         Sort sort = dir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         return driverRepository.findAll(sort).stream()
                 .map(driverMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<TeamStandingDto> getTeamStandings() {
+        return driverRepository.findAll().stream()
+                .collect(Collectors.groupingBy(Driver::getTeam, Collectors.summingInt(Driver::getPoints)))
+                .entrySet().stream()
+                .map(entry -> new TeamStandingDto(entry.getKey(), entry.getValue()))
+                .sorted((a, b) -> Integer.compare(b.getPoints(), a.getPoints()))
                 .collect(Collectors.toList());
     }
 

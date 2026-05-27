@@ -24,6 +24,13 @@
         .btn { padding: 10px 15px; background: #333; color: white; border: none; cursor: pointer; }
         .btn-primary { background: #e10600; }
         .btn-cancel { background: #888; }
+        .btn-export { background: #28a745; margin-left:10px;}
+        .layout { display: flex; gap: 20px; }
+        .main-content { flex: 3; }
+        .sidebar { flex: 1; }
+        .search-bar { margin-bottom: 20px; padding: 10px; width: 100%; box-sizing: border-box; font-size: 16px; border: 1px solid #ddd; border-radius: 5px; }
+        .standings-table { width: 100%; }
+        .standings-table th { background-color: #333; }
     </style>
 </head>
 <body ng-controller="DriverController">
@@ -36,68 +43,104 @@
 
     <div ng-if="errorMessage" class="error">{{errorMessage}}</div>
 
-    <div class="form-container">
-        <h2>{{ editingDriver ? 'Edytuj Kierowcę' : 'Dodaj Nowego Kierowcę' }}</h2>
-        <form ng-submit="submitForm()">
-            <div class="form-group">
-                <label>Imię:</label>
-                <input type="text" ng-model="newDriver.firstName" required>
+    <div class="layout">
+        <div class="main-content">
+            <div class="form-container">
+                <h2>{{ editingDriver ? 'Edytuj Kierowcę' : 'Dodaj Nowego Kierowcę' }}</h2>
+                <form ng-submit="submitForm()">
+                    <div class="form-group">
+                        <label>Imię:</label>
+                        <input type="text" ng-model="newDriver.firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nazwisko:</label>
+                        <input type="text" ng-model="newDriver.lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Numer startowy:</label>
+                        <input type="number" ng-model="newDriver.carNumber" required min="1" max="99">
+                    </div>
+                    <div class="form-group">
+                        <label>Wybierz zespół:</label>
+                        <select ng-model="newDriver.team" ng-options="team for team in teams" required></select>
+                    </div>
+                     <div class="form-group">
+                        <label>Punkty:</label>
+                        <input type="number" ng-model="newDriver.points" required min="0">
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ editingDriver ? 'Zapisz zmiany' : 'Dodaj kierowcę' }}</button>
+                    <button type="button" class="btn btn-cancel" ng-if="editingDriver" ng-click="resetForm()">Anuluj</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label>Nazwisko:</label>
-                <input type="text" ng-model="newDriver.lastName" required>
+
+            <input type="text" class="search-bar" placeholder="🔍 Wyszukaj kierowcę po imieniu lub nazwisku..." ng-model="searchQuery" ng-change="loadDrivers()">
+
+            <div style="margin-bottom: 15px;">
+                <button ng-click="loadDrivers()" class="btn">
+                    🔄 Odśwież listę
+                </button>
+                <button ng-click="exportCsv()" class="btn btn-export">
+                    📥 Pobierz raport (.csv)
+                </button>
             </div>
-            <div class="form-group">
-                <label>Numer startowy:</label>
-                <input type="number" ng-model="newDriver.carNumber" required min="1" max="99">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th ng-click="sortBy('id')" style="cursor:pointer">ID<span ng-show="sortField == 'id'">{{sortIcon}}</span></th>
+                        <th ng-click="sortBy('firstName')" style="cursor:pointer">Imię<span ng-show="sortField == 'firstName'">{{sortIcon}}</span></th>
+                        <th ng-click="sortBy('lastName')" style="cursor:pointer">Nazwisko<span ng-show="sortField == 'lastName'">{{sortIcon}}</span></th>
+                        <th ng-click="sortBy('carNumber')" style="cursor:pointer">Numer<span ng-show="sortField == 'carNumber'">{{sortIcon}}</span></th>
+                        <th ng-click="sortBy('points')" style="cursor:pointer">Punkty<span ng-show="sortField == 'points'">{{sortIcon}}</span></th>
+                        <th ng-click="sortBy('team')" style="cursor:pointer">Zespół<span ng-show="sortField == 'team'">{{sortIcon}}</span></th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="driver in drivers">
+                        <td>{{driver.id}}</td>
+                        <td>{{driver.firstName}}</td>
+                        <td>{{driver.lastName}}</td>
+                        <td>{{driver.carNumber}}</td>
+                        <td>{{driver.points}}</td>
+                        <td>{{driver.team}}</td>
+                        <td>
+                            <button ng-click="editDriver(driver)" style="color: blue; cursor: pointer; margin-right: 10px;">Edytuj</button>
+                            <button ng-click="deleteDriver(driver.id)" style="color: red; cursor: pointer;">Usuń</button>
+                        </td>
+                    </tr>
+                    <tr ng-if="drivers.length === 0">
+                        <td colspan="7" style="text-align: center;">Brak kierowców. Baza jest pusta.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sidebar">
+            <div class="form-container">
+                <h2>🏆 Wyniki Konstruktorów</h2>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Pozycja</th>
+                            <th>Zespół</th>
+                            <th>Punkty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="standing in standings">
+                            <td>{{$index + 1}}</td>
+                            <td><strong>{{standing.teamName}}</strong></td>
+                            <td>{{standing.points}}</td>
+                        </tr>
+                        <tr ng-if="standings.length === 0">
+                            <td colspan="3" style="text-align: center;">Brak danych</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label>Wybierz zespół:</label>
-                <select ng-model="newDriver.team" ng-options="team for team in teams" required></select>
-            </div>
-             <div class="form-group">
-                <label>Punkty:</label>
-                <input type="number" ng-model="newDriver.points" required min="0">
-            </div>
-            <button type="submit" class="btn btn-primary">{{ editingDriver ? 'Zapisz zmiany' : 'Dodaj kierowcę' }}</button>
-            <button type="button" class="btn btn-cancel" ng-if="editingDriver" ng-click="resetForm()">Anuluj</button>
-        </form>
+        </div>
     </div>
-
-    <button ng-click="loadDrivers()" class="btn">
-        🔄 Odśwież listę
-    </button>
-
-    <table>
-        <thead>
-            <tr>
-                <th ng-click="sortBy('id')" style="cursor:pointer">ID<span ng-show="sortField == 'id'">{{sortIcon}}</span></th>
-                <th ng-click="sortBy('firstName')" style="cursor:pointer">Imię<span ng-show="sortField == 'firstName'">{{sortIcon}}</span></th>
-                <th ng-click="sortBy('lastName')" style="cursor:pointer">Nazwisko<span ng-show="sortField == 'lastName'">{{sortIcon}}</span></th>
-                <th ng-click="sortBy('carNumber')" style="cursor:pointer">Numer<span ng-show="sortField == 'carNumber'">{{sortIcon}}</span></th>
-                <th ng-click="sortBy('points')" style="cursor:pointer">Punkty<span ng-show="sortField == 'points'">{{sortIcon}}</span></th>
-                <th ng-click="sortBy('team')" style="cursor:pointer">Zespół<span ng-show="sortField == 'team'">{{sortIcon}}</span></th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="driver in drivers">
-                <td>{{driver.id}}</td>
-                <td>{{driver.firstName}}</td>
-                <td>{{driver.lastName}}</td>
-                <td>{{driver.carNumber}}</td>
-                <td>{{driver.points}}</td>
-                <td>{{driver.team}}</td>
-                <td>
-                    <button ng-click="editDriver(driver)" style="color: blue; cursor: pointer; margin-right: 10px;">Edytuj</button>
-                    <button ng-click="deleteDriver(driver.id)" style="color: red; cursor: pointer;">Usuń</button>
-                </td>
-            </tr>
-            <tr ng-if="drivers.length === 0">
-                <td colspan="7" style="text-align: center;">Brak kierowców. Baza jest pusta.</td>
-            </tr>
-        </tbody>
-    </table>
 
 </body>
 </html>

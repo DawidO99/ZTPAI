@@ -3,7 +3,9 @@ var app = angular.module('f1App', []);
 app.controller('DriverController', function($scope, $http) {
 
     $scope.drivers = [];
+    $scope.standings = [];
     $scope.errorMessage = '';
+    $scope.searchQuery = '';
 
     $scope.teams = [
         "Red Bull Racing", "Mercedes", "Ferrari", "McLaren", "Aston Martin",
@@ -42,9 +44,21 @@ app.controller('DriverController', function($scope, $http) {
 
     var apiUrl = '/api/drivers';
 
+    $scope.loadStandings = function() {
+        $http.get(apiUrl + '/standings')
+            .then(function(response) {
+                $scope.standings = response.data;
+            });
+    };
+
     $scope.loadDrivers = function() {
         $scope.errorMessage = '';
-        $http.get(apiUrl + "?sortBy=" + $scope.sortField + "&dir=" + $scope.sortDir)
+        var url = apiUrl + "?sortBy=" + $scope.sortField + "&dir=" + $scope.sortDir;
+        if ($scope.searchQuery) {
+            url += "&search=" + encodeURIComponent($scope.searchQuery);
+        }
+
+        $http.get(url)
             .then(function(response) {
                 // sort is now done on server
                 $scope.drivers = response.data;
@@ -53,12 +67,17 @@ app.controller('DriverController', function($scope, $http) {
             });
     };
 
+    $scope.exportCsv = function() {
+        window.location.href = apiUrl + '/export';
+    };
+
     $scope.submitForm = function() {
         if ($scope.editingDriver) {
             // Update
             $http.put(apiUrl + '/' + $scope.newDriver.id, $scope.newDriver)
                 .then(function(response) {
                     $scope.loadDrivers();
+                    $scope.loadStandings();
                     $scope.resetForm();
                 }, function(error) {
                     $scope.errorMessage = 'Błąd aktualizacji: ' + (error.data.message || error.statusText);
@@ -68,6 +87,7 @@ app.controller('DriverController', function($scope, $http) {
             $http.post(apiUrl, $scope.newDriver)
                 .then(function(response) {
                     $scope.loadDrivers();
+                    $scope.loadStandings();
                     $scope.resetForm();
                 }, function(error) {
                     $scope.errorMessage = 'Błąd dodawania: ' + (error.data.message || error.statusText);
@@ -98,6 +118,7 @@ app.controller('DriverController', function($scope, $http) {
             $http.delete(apiUrl + '/' + id)
                 .then(function(response) {
                     $scope.loadDrivers();
+                    $scope.loadStandings();
                 }, function(error) {
                     $scope.errorMessage = 'Błąd usuwania: ' + (error.data.message || error.statusText);
                 });
@@ -106,4 +127,5 @@ app.controller('DriverController', function($scope, $http) {
 
     // Auto-load on init
     $scope.loadDrivers();
+    $scope.loadStandings();
 });
