@@ -18,7 +18,8 @@ app.controller('DriverController', function($scope, $http) {
         lastName: '',
         carNumber: null,
         points: 0,
-        team: $scope.teams[0] // Default team
+        team: $scope.teams[0], // Default team
+        overall: 80
     };
 
     $scope.editingDriver = null;
@@ -122,7 +123,8 @@ app.controller('DriverController', function($scope, $http) {
             lastName: '',
             carNumber: null,
             points: 0,
-            team: $scope.teams[0]
+            team: $scope.teams[0],
+            overall: 80
         };
         $scope.errorMessage = '';
     };

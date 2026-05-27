@@ -17,6 +17,7 @@ public class DriverMapper {
                 .carNumber(driver.getCarNumber())
                 .points(driver.getPoints())
                 .team(driver.getTeam())
+                .overall(driver.getOverall())
                 .build();
     }
 
@@ -31,6 +32,7 @@ public class DriverMapper {
                 .carNumber(dto.getCarNumber())
                 .points(dto.getPoints() != null ? dto.getPoints() : 0)
                 .team(dto.getTeam())
+                .overall(dto.getOverall() != null ? dto.getOverall() : 50)
                 .build();
     }
 }

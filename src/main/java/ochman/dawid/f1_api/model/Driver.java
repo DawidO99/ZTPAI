@@ -29,5 +29,8 @@ public class Driver {
 
     @Column(nullable = false)
     private String team;
-}
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer overall = 50;
+}

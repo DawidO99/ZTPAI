@@ -1,6 +1,7 @@
 package ochman.dawid.f1_api.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,9 @@ public class DriverDto {
 
     @NotBlank(message = "Team name is mandatory")
     private String team;
-}
 
+    @NotNull(message = "Overall validation error")
+    @Min(value = 0, message = "Overall cannot be negative")
+    @Max(value = 99, message = "Overall cannot exceed 99")
+    private Integer overall;
+}

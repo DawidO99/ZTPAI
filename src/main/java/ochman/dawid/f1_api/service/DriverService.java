@@ -14,6 +14,7 @@ import ochman.dawid.f1_api.dto.TeamStandingDto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,8 +52,14 @@ public class DriverService {
             throw new IllegalStateException("Nie ma wystarczającej liczby kierowców by symulować wyścig.");
         }
 
-        // Tasujemy listę kierowców, by zasymulować losowe wyniki:
-        java.util.Collections.shuffle(allDrivers);
+        Random random = new Random();
+
+        // Sortujemy rosnąco po "sile" powiększonej o czynnik losowy (0-30 punktów) od najlepszego do najsłabszego
+        allDrivers.sort((d1, d2) -> {
+            int score1 = d1.getOverall() + random.nextInt(30);
+            int score2 = d2.getOverall() + random.nextInt(30);
+            return Integer.compare(score2, score1);
+        });
 
         int[] pointsDistribution = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
         List<String> raceResults = new java.util.ArrayList<>();
@@ -112,6 +119,7 @@ public class DriverService {
         driver.setCarNumber(driverDto.getCarNumber());
         driver.setPoints(driverDto.getPoints());
         driver.setTeam(driverDto.getTeam());
+        driver.setOverall(driverDto.getOverall() != null ? driverDto.getOverall() : 50);
 
         Driver updatedDriver = driverRepository.save(driver);
         return driverMapper.toDto(updatedDriver);

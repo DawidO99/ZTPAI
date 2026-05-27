@@ -65,6 +65,10 @@
                         <select ng-model="newDriver.team" ng-options="team for team in teams" required></select>
                     </div>
                      <div class="form-group">
+                        <label>Siła (0-99):</label>
+                        <input type="number" ng-model="newDriver.overall" required min="0" max="99">
+                    </div>
+                     <div class="form-group">
                         <label>Punkty:</label>
                         <input type="number" ng-model="newDriver.points" required min="0">
                     </div>
@@ -94,6 +98,7 @@
                         <th ng-click="sortBy('firstName')" style="cursor:pointer">Imię<span ng-show="sortField == 'firstName'">{{sortIcon}}</span></th>
                         <th ng-click="sortBy('lastName')" style="cursor:pointer">Nazwisko<span ng-show="sortField == 'lastName'">{{sortIcon}}</span></th>
                         <th ng-click="sortBy('carNumber')" style="cursor:pointer">Numer<span ng-show="sortField == 'carNumber'">{{sortIcon}}</span></th>
+                        <th ng-click="sortBy('overall')" style="cursor:pointer">Siła<span ng-show="sortField == 'overall'">{{sortIcon}}</span></th>
                         <th ng-click="sortBy('points')" style="cursor:pointer">Punkty<span ng-show="sortField == 'points'">{{sortIcon}}</span></th>
                         <th ng-click="sortBy('team')" style="cursor:pointer">Zespół<span ng-show="sortField == 'team'">{{sortIcon}}</span></th>
                         <th>Akcje</th>
@@ -105,6 +110,7 @@
                         <td>{{driver.firstName}}</td>
                         <td>{{driver.lastName}}</td>
                         <td>{{driver.carNumber}}</td>
+                        <td><strong>{{driver.overall}}</strong></td>
                         <td>{{driver.points}}</td>
                         <td>{{driver.team}}</td>
                         <td>
