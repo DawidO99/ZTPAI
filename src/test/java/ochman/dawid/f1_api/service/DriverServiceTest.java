@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,5 +110,22 @@ class DriverServiceTest {
         // when & then
         assertThrows(ResourceNotFoundException.class, () -> driverService.getDriverById(1L));
     }
-}
 
+    @Test
+    void shouldResetSeason() {
+        // given
+        Driver driver2 = Driver.builder()
+                .id(2L).firstName("Lewis").points(50).build();
+        List<Driver> drivers = List.of(driver, driver2);
+
+        when(driverRepository.findAll()).thenReturn(drivers);
+
+        // when
+        driverService.resetSeason();
+
+        // then
+        assertEquals(0, driver.getPoints());
+        assertEquals(0, driver2.getPoints());
+        verify(driverRepository, times(1)).saveAll(drivers);
+    }
+}
