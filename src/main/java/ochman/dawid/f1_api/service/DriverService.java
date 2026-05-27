@@ -45,6 +45,31 @@ public class DriverService {
                 .collect(Collectors.toList());
     }
 
+    public List<String> simulateRace() {
+        List<Driver> allDrivers = driverRepository.findAll();
+        if (allDrivers.size() < 10) {
+            throw new IllegalStateException("Nie ma wystarczającej liczby kierowców by symulować wyścig.");
+        }
+
+        // Tasujemy listę kierowców, by zasymulować losowe wyniki:
+        java.util.Collections.shuffle(allDrivers);
+
+        int[] pointsDistribution = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
+        List<String> raceResults = new java.util.ArrayList<>();
+
+        // Przydzielamy punkty dla top 10:
+        for (int i = 0; i < 10; i++) {
+            Driver driver = allDrivers.get(i);
+            driver.setPoints(driver.getPoints() + pointsDistribution[i]);
+            driverRepository.save(driver);
+
+            String emoji = (i == 0) ? "🥇" : (i == 1) ? "🥈" : (i == 2) ? "🥉" : "🏎️";
+            raceResults.add(emoji + " " + (i + 1) + ". " + driver.getFirstName() + " " + driver.getLastName() + " (+" + pointsDistribution[i] + " pkt)");
+        }
+
+        return raceResults;
+    }
+
     public DriverDto getDriverById(Long id) {
         Driver driver = driverRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found with id: " + id));

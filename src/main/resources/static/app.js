@@ -4,6 +4,7 @@ app.controller('DriverController', function($scope, $http) {
 
     $scope.drivers = [];
     $scope.standings = [];
+    $scope.lastRaceResults = [];
     $scope.errorMessage = '';
     $scope.searchQuery = '';
 
@@ -69,6 +70,19 @@ app.controller('DriverController', function($scope, $http) {
 
     $scope.exportCsv = function() {
         window.location.href = apiUrl + '/export';
+    };
+
+    $scope.simulateRace = function() {
+        if(confirm("🚥 Czy chcesz wylosować wyniki nowego GP i przydzielić punkty kierowcom?")) {
+            $http.post(apiUrl + '/simulate-race')
+                .then(function(response) {
+                    $scope.lastRaceResults = response.data;
+                    $scope.loadDrivers();
+                    $scope.loadStandings();
+                }, function(error) {
+                    $scope.errorMessage = 'Błąd symulacji wyścigu: ' + (error.data.message || error.statusText);
+                });
+        }
     };
 
     $scope.submitForm = function() {

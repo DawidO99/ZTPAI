@@ -51,6 +51,11 @@ public class DriverController {
         return new ResponseEntity<>(csv.toString().getBytes(), headers, HttpStatus.OK);
     }
 
+    @PostMapping("/simulate-race")
+    public ResponseEntity<List<String>> simulateRace() {
+        return ResponseEntity.ok(driverService.simulateRace());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<DriverDto> getDriverById(@PathVariable Long id) {
         return ResponseEntity.ok(driverService.getDriverById(id));

@@ -82,6 +82,9 @@
                 <button ng-click="exportCsv()" class="btn btn-export">
                     📥 Pobierz raport (.csv)
                 </button>
+                <button ng-click="simulateRace()" class="btn" style="background-color: #9c27b0; margin-left: 10px;">
+                    🏁 Symuluj wyścig
+                </button>
             </div>
 
             <table>
@@ -117,6 +120,15 @@
         </div>
 
         <div class="sidebar">
+            <div class="form-container" ng-if="lastRaceResults.length > 0" style="background-color: #fce4ec; border-color: #f8bbd0;">
+                <h2 style="color: #880e4f; margin-top: 0;">🏁 Wyniki z Ostatniego Grand Prix</h2>
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li ng-repeat="result in lastRaceResults" style="padding: 8px 0; border-bottom: 1px solid #f8bbd0; color: #333; font-weight: 500;">
+                        {{result}}
+                    </li>
+                </ul>
+            </div>
+
             <div class="form-container">
                 <h2>🏆 Wyniki Konstruktorów</h2>
                 <table class="standings-table">
