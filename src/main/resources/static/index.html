@@ -17,6 +17,13 @@
         .error { color: red; margin-bottom: 20px; }
         .success { color: green; margin-bottom: 20px; }
         .auth-notice { background-color: #fff3cd; padding: 10px; border-left: 5px solid #ffecb5; margin-bottom: 20px;}
+        .form-container { background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px;}
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .btn { padding: 10px 15px; background: #333; color: white; border: none; cursor: pointer; }
+        .btn-primary { background: #e10600; }
+        .btn-cancel { background: #888; }
     </style>
 </head>
 <body ng-controller="DriverController">
@@ -29,22 +36,47 @@
 
     <div ng-if="errorMessage" class="error">{{errorMessage}}</div>
 
-    <button ng-click="loadDrivers()" style="padding: 10px 15px; background: #333; color: white; border: none; cursor: pointer;">
+    <div class="form-container">
+        <h2>{{ editingDriver ? 'Edytuj Kierowcę' : 'Dodaj Nowego Kierowcę' }}</h2>
+        <form ng-submit="submitForm()">
+            <div class="form-group">
+                <label>Imię:</label>
+                <input type="text" ng-model="newDriver.firstName" required>
+            </div>
+            <div class="form-group">
+                <label>Nazwisko:</label>
+                <input type="text" ng-model="newDriver.lastName" required>
+            </div>
+            <div class="form-group">
+                <label>Numer startowy:</label>
+                <input type="number" ng-model="newDriver.carNumber" required min="1" max="99">
+            </div>
+            <div class="form-group">
+                <label>Wybierz zespół:</label>
+                <select ng-model="newDriver.team" ng-options="team for team in teams" required></select>
+            </div>
+             <div class="form-group">
+                <label>Punkty:</label>
+                <input type="number" ng-model="newDriver.points" required min="0">
+            </div>
+            <button type="submit" class="btn btn-primary">{{ editingDriver ? 'Zapisz zmiany' : 'Dodaj kierowcę' }}</button>
+            <button type="button" class="btn btn-cancel" ng-if="editingDriver" ng-click="resetForm()">Anuluj</button>
+        </form>
+    </div>
+
+    <button ng-click="loadDrivers()" class="btn">
         🔄 Odśwież listę
-    </button>
-    <button ng-click="addFakeDriver()" style="padding: 10px 15px; background: #e10600; color: white; border: none; cursor: pointer; margin-left: 10px;">
-        ➕ Dodaj testowego kierowcę
     </button>
 
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Imię</th>
-                <th>Nazwisko</th>
-                <th>Numer</th>
-                <th>Punkty</th>
-                <th>Zespół</th>
+                <th ng-click="sortBy('id')" style="cursor:pointer">ID<span ng-show="sortField == 'id'">{{sortIcon}}</span></th>
+                <th ng-click="sortBy('firstName')" style="cursor:pointer">Imię<span ng-show="sortField == 'firstName'">{{sortIcon}}</span></th>
+                <th ng-click="sortBy('lastName')" style="cursor:pointer">Nazwisko<span ng-show="sortField == 'lastName'">{{sortIcon}}</span></th>
+                <th ng-click="sortBy('carNumber')" style="cursor:pointer">Numer<span ng-show="sortField == 'carNumber'">{{sortIcon}}</span></th>
+                <th ng-click="sortBy('points')" style="cursor:pointer">Punkty<span ng-show="sortField == 'points'">{{sortIcon}}</span></th>
+                <th ng-click="sortBy('team')" style="cursor:pointer">Zespół<span ng-show="sortField == 'team'">{{sortIcon}}</span></th>
                 <th>Akcje</th>
             </tr>
         </thead>
@@ -57,6 +89,7 @@
                 <td>{{driver.points}}</td>
                 <td>{{driver.team}}</td>
                 <td>
+                    <button ng-click="editDriver(driver)" style="color: blue; cursor: pointer; margin-right: 10px;">Edytuj</button>
                     <button ng-click="deleteDriver(driver.id)" style="color: red; cursor: pointer;">Usuń</button>
                 </td>
             </tr>

@@ -18,8 +18,10 @@ public class DriverController {
     private final DriverService driverService;
 
     @GetMapping
-    public ResponseEntity<List<DriverDto>> getAllDrivers() {
-        return ResponseEntity.ok(driverService.getAllDrivers());
+    public ResponseEntity<List<DriverDto>> getAllDrivers(
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String dir) {
+        return ResponseEntity.ok(driverService.getAllDrivers(sortBy, dir));
     }
 
     @GetMapping("/{id}")
@@ -43,4 +45,3 @@ public class DriverController {
         return ResponseEntity.noContent().build();
     }
 }
-

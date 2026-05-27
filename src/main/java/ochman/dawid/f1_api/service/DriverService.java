@@ -9,6 +9,7 @@ import ochman.dawid.f1_api.repository.DriverRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ochman.dawid.f1_api.event.DriverCreatedEvent;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +23,9 @@ public class DriverService {
     private final DriverMapper driverMapper;
     private final ApplicationEventPublisher eventPublisher;
 
-    public List<DriverDto> getAllDrivers() {
-        return driverRepository.findAll().stream()
+    public List<DriverDto> getAllDrivers(String sortBy, String dir) {
+        Sort sort = dir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        return driverRepository.findAll(sort).stream()
                 .map(driverMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -38,6 +40,10 @@ public class DriverService {
         if (driverRepository.findByCarNumber(driverDto.getCarNumber()).isPresent()) {
             throw new IllegalArgumentException("Driver with car number " + driverDto.getCarNumber() + " already exists");
         }
+        if (driverRepository.countByTeam(driverDto.getTeam()) >= 2) {
+            throw new IllegalArgumentException("Team " + driverDto.getTeam() + " already has a maximum of 2 drivers");
+        }
+
         Driver driver = driverMapper.toEntity(driverDto);
         Driver savedDriver = driverRepository.save(driver);
 
@@ -55,6 +61,10 @@ public class DriverService {
         Optional<Driver> existingDriverWithNumber = driverRepository.findByCarNumber(driverDto.getCarNumber());
         if (existingDriverWithNumber.isPresent() && !existingDriverWithNumber.get().getId().equals(id)) {
             throw new IllegalArgumentException("Driver with car number " + driverDto.getCarNumber() + " already exists");
+        }
+
+        if (driverRepository.countByTeamAndIdNot(driverDto.getTeam(), id) >= 2) {
+            throw new IllegalArgumentException("Team " + driverDto.getTeam() + " already has a maximum of 2 drivers");
         }
 
         driver.setFirstName(driverDto.getFirstName());
