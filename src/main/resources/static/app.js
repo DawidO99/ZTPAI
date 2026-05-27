@@ -24,6 +24,13 @@ app.controller('DriverController', function($scope, $http) {
 
     $scope.editingDriver = null;
 
+    $scope.isLoggedIn = false;
+    $scope.loginData = {
+        username: '',
+        password: ''
+    };
+    $scope.loginError = '';
+
     $scope.sortField = 'id';
     $scope.sortDir = 'asc';
     $scope.sortIcon = ' 🔼';
@@ -40,13 +47,46 @@ app.controller('DriverController', function($scope, $http) {
         $scope.loadDrivers();
     };
 
-    // Setup Basic Auth header for all requests
-    var authHeader = 'Basic ' + btoa('admin:admin');
-    $http.defaults.headers.common['Authorization'] = authHeader;
-
     var apiUrl = '/api/drivers';
 
-    $scope.seasonStatus = { racesCompleted: 0, maxRaces: 24 };
+    $scope.login = function() {
+        var authHeader = 'Basic ' + btoa($scope.loginData.username + ':' + $scope.loginData.password);
+
+        $http({
+            method: 'GET',
+            url: apiUrl + '/season-status',
+            headers: {
+                'Authorization': authHeader,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(response) {
+            $http.defaults.headers.common['Authorization'] = authHeader;
+            $http.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+            $scope.isLoggedIn = true;
+            $scope.loginError = '';
+            $scope.seasonStatus = response.data;
+            // Skoro działa, ładujemy całą resztę.
+            $scope.loadDrivers();
+            $scope.loadStandings();
+        }, function(error) {
+            if(error.status === 401) {
+                $scope.loginError = "Nieprawidłowy login lub hasło.";
+            } else {
+                $scope.loginError = "Błąd połączenia z API: " + error.statusText;
+            }
+        });
+    };
+
+    $scope.logout = function() {
+        $scope.isLoggedIn = false;
+        $http.defaults.headers.common['Authorization'] = '';
+        $scope.loginData.password = '';
+        $scope.drivers = [];
+        $scope.standings = [];
+        $scope.lastRaceResults = [];
+    };
 
     $scope.loadSeasonStatus = function() {
         $http.get(apiUrl + '/season-status')
@@ -166,8 +206,5 @@ app.controller('DriverController', function($scope, $http) {
         }
     }
 
-    // Auto-load on init
-    $scope.loadDrivers();
-    $scope.loadStandings();
-    $scope.loadSeasonStatus();
+    // Auto-load on init is removed, wait for login
 });
