@@ -80,10 +80,7 @@
             <input type="text" class="search-bar" placeholder="🔍 Wyszukaj kierowcę po imieniu lub nazwisku..." ng-model="searchQuery" ng-change="loadDrivers()">
 
             <div style="margin-bottom: 15px;">
-                <button ng-click="loadDrivers()" class="btn">
-                    🔄 Odśwież listę
-                </button>
-                <button ng-click="exportCsv()" class="btn btn-export">
+                <button ng-click="exportCsv()" class="btn btn-export" style="margin-left: 0;">
                     📥 Pobierz raport (.csv)
                 </button>
                 <button ng-click="simulateRace()" class="btn" style="background-color: #9c27b0; margin-left: 10px;">
