@@ -6,7 +6,7 @@ Aplikacja stanowi w pełni funkcjonalne zaplecze (REST API) dla portalu sportowe
 
 ## Linki
 - **Repozytorium GitHub:** [https://github.com/DawidO99/ZTPAI]()
-- **Demo Video:** [Wstaw Link do Video]()
+- **Demo Video:** [https://youtu.be/64Bsi1UInlo]()
 
 ## Architektura i Pakiety
 Projekt został napisany z wykorzystaniem framweorku Spring Boot (Java 21) oraz Angular, zgodnie z dobrymi praktykami wielowarstwowej architektury (Multilayer Architecture). Posiada podział na:
