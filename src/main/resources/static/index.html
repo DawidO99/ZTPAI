@@ -98,7 +98,7 @@
                     </form>
                 </div>
 
-                <input type="text" class="search-bar" placeholder="🔍 Wyszukaj kierowcę po imieniu lub nazwisku..." ng-model="searchQuery" ng-change="loadDrivers()">
+                <input type="text" class="search-bar" placeholder="🔍 Wyszukaj kierowcę po imieniu lub nazwisku..." ng-model="filters.searchQuery" ng-change="loadDrivers()">
 
                 <div style="margin-bottom: 15px;">
                     <button ng-click="exportCsv()" class="btn btn-export" style="margin-left: 0;">

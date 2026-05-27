@@ -6,7 +6,9 @@ app.controller('DriverController', function($scope, $http) {
     $scope.standings = [];
     $scope.lastRaceResults = [];
     $scope.errorMessage = '';
-    $scope.searchQuery = '';
+    $scope.filters = {
+        searchQuery: ''
+    };
 
     $scope.teams = [
         "Alpine F1 Team", "Aston Martin", "Audi", "Cadillac F1 Team", "Haas F1 Team",
@@ -105,8 +107,8 @@ app.controller('DriverController', function($scope, $http) {
     $scope.loadDrivers = function() {
         $scope.errorMessage = '';
         var url = apiUrl + "?sortBy=" + $scope.sortField + "&dir=" + $scope.sortDir;
-        if ($scope.searchQuery) {
-            url += "&search=" + encodeURIComponent($scope.searchQuery);
+        if ($scope.filters.searchQuery) {
+            url += "&search=" + encodeURIComponent($scope.filters.searchQuery);
         }
 
         $http.get(url)
