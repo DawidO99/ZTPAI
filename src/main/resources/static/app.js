@@ -46,6 +46,15 @@ app.controller('DriverController', function($scope, $http) {
 
     var apiUrl = '/api/drivers';
 
+    $scope.seasonStatus = { racesCompleted: 0, maxRaces: 24 };
+
+    $scope.loadSeasonStatus = function() {
+        $http.get(apiUrl + '/season-status')
+            .then(function(response) {
+                $scope.seasonStatus = response.data;
+            });
+    };
+
     $scope.loadStandings = function() {
         $http.get(apiUrl + '/standings')
             .then(function(response) {
@@ -80,8 +89,24 @@ app.controller('DriverController', function($scope, $http) {
                     $scope.lastRaceResults = response.data;
                     $scope.loadDrivers();
                     $scope.loadStandings();
+                    $scope.loadSeasonStatus();
                 }, function(error) {
                     $scope.errorMessage = 'Błąd symulacji wyścigu: ' + (error.data.message || error.statusText);
+                });
+        }
+    };
+
+    $scope.resetSeason = function() {
+        if(confirm("Ostrzeżenie: Wyzerować punkty wszystkich zawodników i zacząć nowy sezon?")) {
+            $http.post(apiUrl + '/reset')
+                .then(function(response) {
+                    $scope.lastRaceResults = [];
+                    $scope.loadDrivers();
+                    $scope.loadStandings();
+                    $scope.loadSeasonStatus();
+                    $scope.errorMessage = '';
+                }, function(error) {
+                    $scope.errorMessage = 'Błąd resetu punktów: ' + (error.data.message || error.statusText);
                 });
         }
     };
@@ -144,4 +169,5 @@ app.controller('DriverController', function($scope, $http) {
     // Auto-load on init
     $scope.loadDrivers();
     $scope.loadStandings();
+    $scope.loadSeasonStatus();
 });

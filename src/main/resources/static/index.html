@@ -89,6 +89,12 @@
                 <button ng-click="simulateRace()" class="btn" style="background-color: #9c27b0; margin-left: 10px;">
                     🏁 Symuluj wyścig
                 </button>
+                <button ng-click="resetSeason()" class="btn" style="background-color: #ff9800; margin-left: 10px;">
+                    🗑️ Resetuj sezon
+                </button>
+                <span style="display:inline-block; margin-left: 15px; font-size: 15px; font-weight: bold; padding: 10px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 5px; color: #856404;">
+                    Wyścigi: 🏎️ {{seasonStatus.racesCompleted}} / {{seasonStatus.maxRaces}}
+                </span>
             </div>
 
             <table>

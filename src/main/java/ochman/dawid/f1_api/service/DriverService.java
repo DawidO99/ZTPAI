@@ -25,6 +25,20 @@ public class DriverService {
     private final DriverMapper driverMapper;
     private final ApplicationEventPublisher eventPublisher;
 
+    private int racesCompleted = 0;
+    private final int MAX_RACES = 24;
+
+    public java.util.Map<String, Integer> getSeasonStatus() {
+        return java.util.Map.of("racesCompleted", racesCompleted, "maxRaces", MAX_RACES);
+    }
+
+    public void resetSeason() {
+        List<Driver> drivers = driverRepository.findAll();
+        drivers.forEach(d -> d.setPoints(0));
+        driverRepository.saveAll(drivers);
+        racesCompleted = 0;
+    }
+
     public List<DriverDto> getAllDrivers(String sortBy, String dir, String search) {
         if (search != null && !search.isBlank()) {
             return driverRepository.findByLastNameContainingIgnoreCaseOrFirstNameContainingIgnoreCase(search, search).stream()
@@ -47,9 +61,13 @@ public class DriverService {
     }
 
     public List<String> simulateRace() {
+        if (racesCompleted >= MAX_RACES) {
+            throw new IllegalArgumentException("Sezon osiągnął już limit " + MAX_RACES + " wyścigów! Użyj opcji resetuj sezon.");
+        }
+
         List<Driver> allDrivers = driverRepository.findAll();
         if (allDrivers.size() < 10) {
-            throw new IllegalStateException("Nie ma wystarczającej liczby kierowców by symulować wyścig.");
+            throw new IllegalArgumentException("Nie ma wystarczającej liczby kierowców by symulować wyścig.");
         }
 
         Random random = new Random();
@@ -74,6 +92,7 @@ public class DriverService {
             raceResults.add(emoji + " " + (i + 1) + ". " + driver.getFirstName() + " " + driver.getLastName() + " (+" + pointsDistribution[i] + " pkt)");
         }
 
+        racesCompleted++;
         return raceResults;
     }
 

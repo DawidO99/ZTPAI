@@ -56,6 +56,17 @@ public class DriverController {
         return ResponseEntity.ok(driverService.simulateRace());
     }
 
+    @GetMapping("/season-status")
+    public ResponseEntity<java.util.Map<String, Integer>> getSeasonStatus() {
+        return ResponseEntity.ok(driverService.getSeasonStatus());
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<Void> resetSeason() {
+        driverService.resetSeason();
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<DriverDto> getDriverById(@PathVariable Long id) {
         return ResponseEntity.ok(driverService.getDriverById(id));
