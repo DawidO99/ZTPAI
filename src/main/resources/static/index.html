@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="f1App">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Paddock API - Frontend</title>
+    <!-- AngularJS from CDN for a zero-build simple Angular app -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        h1 { color: #e10600; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; background-color: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #e10600; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .error { color: red; margin-bottom: 20px; }
+        .success { color: green; margin-bottom: 20px; }
+        .auth-notice { background-color: #fff3cd; padding: 10px; border-left: 5px solid #ffecb5; margin-bottom: 20px;}
+    </style>
+</head>
+<body ng-controller="DriverController">
+
+    <h1>🏎️ F1 Paddock API - Drivers List</h1>
+
+    <div class="auth-notice">
+        <strong>Uwaga:</strong> Aplikacja korzysta z wymaganego przy API Basic Auth. Dane "admin:admin" są automatycznie używane w żądaniach Angulara.
+    </div>
+
+    <div ng-if="errorMessage" class="error">{{errorMessage}}</div>
+
+    <button ng-click="loadDrivers()" style="padding: 10px 15px; background: #333; color: white; border: none; cursor: pointer;">
+        🔄 Odśwież listę
+    </button>
+    <button ng-click="addFakeDriver()" style="padding: 10px 15px; background: #e10600; color: white; border: none; cursor: pointer; margin-left: 10px;">
+        ➕ Dodaj testowego kierowcę
+    </button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Numer</th>
+                <th>Punkty</th>
+                <th>Zespół</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="driver in drivers">
+                <td>{{driver.id}}</td>
+                <td>{{driver.firstName}}</td>
+                <td>{{driver.lastName}}</td>
+                <td>{{driver.carNumber}}</td>
+                <td>{{driver.points}}</td>
+                <td>{{driver.team}}</td>
+                <td>
+                    <button ng-click="deleteDriver(driver.id)" style="color: red; cursor: pointer;">Usuń</button>
+                </td>
+            </tr>
+            <tr ng-if="drivers.length === 0">
+                <td colspan="7" style="text-align: center;">Brak kierowców. Baza jest pusta.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
+
