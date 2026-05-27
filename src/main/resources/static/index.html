@@ -163,6 +163,30 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="form-container" style="margin-top: 20px;">
+                <h2>👑 Mistrzostwa Kierowców</h2>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Pozycja</th>
+                            <th>Kierowca</th>
+                            <th>Punkty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Pokaż tylko Top 10 w małej tabelce by nie psuć widoku, po posortowaniu po punktach -->
+                        <tr ng-repeat="driver in drivers | orderBy:'-points' | limitTo:10">
+                            <td>{{$index + 1}}</td>
+                            <td><strong>{{driver.firstName}} {{driver.lastName}}</strong></td>
+                            <td>{{driver.points}}</td>
+                        </tr>
+                        <tr ng-if="drivers.length === 0">
+                            <td colspan="3" style="text-align: center;">Brak danych</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
