@@ -5,7 +5,7 @@ System zarządzania danymi o kierowcach Formuły 1.
 Aplikacja stanowi w pełni funkcjonalne zaplecze (REST API) dla portalu sportowego lub bazy danych FIA. Pozwala ona administratorom na kompleksowe zarządzanie uczestnikami rywalizacji – dodawanie nowych kierowców, aktualizację ich punktacji, przypisywanie do zespołów oraz monitorowanie klasyfikacji zespołowej. Aplikacja zawiera inicjalnie dane odzwierciedlające oficjalny rozkład sił z sezonu 2026.
 
 ## Linki
-- **Repozytorium GitHub:** [Wstaw Link do Repozytorium]()
+- **Repozytorium GitHub:** [https://github.com/DawidO99/ZTPAI]()
 - **Demo Video:** [Wstaw Link do Video]()
 
 ## Architektura i Pakiety
